@@ -53,6 +53,7 @@
   "devDependencies": {
     "eslint": "^5.0.1",
     "eslint-loader": "^2.0.0",
-    "eslint-plugin-vue": "^4.5.0"
+    "eslint-plugin-vue": "^4.5.0",
+    "font-awesome": "4.7.0"
   }
 }

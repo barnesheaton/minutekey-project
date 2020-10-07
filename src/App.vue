@@ -1,79 +1,99 @@
 <template>
   <v-app>
-    <v-app-bar app color="accent-4 blue-grey" dense dark>
-      <v-toolbar-title>This...</v-toolbar-title>
+    <v-app-bar app dense>
+      <v-toolbar-title>Adam's Motorcycle Collection</v-toolbar-title>
+      <v-spacer />
+      <v-checkbox
+        :value="$vuetify.theme.dark"
+        class="checkbox"
+        color="white"
+        label="Dark Theme"
+        @change="onToggleTheme"
+      />
     </v-app-bar>
     <v-main>
-      <v-parallax dark src="/dist/assets/background.jpg" class="parallax p-0" height="1000">
-        <v-container class="inner-container" fluid>
-          <v-banner elevation="5" color="white">
-            <div class="text-center banner-container">
-              <h2 class="my-6">
-                Welcome to This...
-              </h2>
-              <v-btn elevation="2" @click="getStocks">
-                Request
-              </v-btn>
-              <vgl-renderer class="getting-started">
-                <vgl-box-geometry name="box"></vgl-box-geometry>
-                <vgl-scene>
-                  <vgl-mesh geometry="box"></vgl-mesh>
-                </vgl-scene>
-                <vgl-perspective-camera orbit-position="3 1 0.5"></vgl-perspective-camera>
-              </vgl-renderer>
-            </div>
-          </v-banner>
-        </v-container>
-      </v-parallax>
+      <v-container fluid>
+        <!-- Loading State -->
+        <v-skeleton-loader v-if="isLoading" class="loader" type="image, article" />
+        <!-- Error State -->
+        <v-alert v-else-if="error" prominent type="error">
+          <v-row align="center">
+            <v-col class="grow">
+              {{ error }}
+            </v-col>
+            <v-col class="shrink">
+              <v-btn @click="getMotorcycleData">Try Again</v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <!-- Success State -->
+        <v-carousel v-else continuous cycle show-arrows hide-delimiters height="100%" elevation="4">
+          <v-carousel-item v-for="(bike, index) in bikes" :key="index">
+            <bike-slide :bike="bike" />
+          </v-carousel-item>
+        </v-carousel>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import BikeSlide from './components/BikeSlide'
+import { getMotorcycles } from './mockServer.js'
 
 export default {
-  name: 'App',
-
+  components: {
+    BikeSlide
+  },
   data() {
     return {
-      stocks: null
+      isLoading: false,
+      error: null,
+      bikes: null
     }
   },
-  methods: {}
+  mounted: function () {
+    this.getMotorcycleData()
+  },
+  methods: {
+    getMotorcycleData() {
+      this.isLoading = true
+
+      getMotorcycles()
+        .then((data) => {
+          this.bikes = data
+          this.error = null
+        })
+        .catch((error) => {
+          this.error = error
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
+    onToggleTheme() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+    }
+  }
 }
 </script>
 
 <style lang="scss">
-.main-banner {
-  opacity: 0.95;
-  margin-top: 100px;
-  margin-bottom: 100px;
+.checkbox {
+  padding-top: 16px !important;
 }
-.v-parallax__content {
-  padding: 0;
-}
-.getting-started {
-  width: 400px;
-  height: 247px;
-}
-.container--fluid {
-  padding-top: 100px !important;
-  padding-bottom: 100px !important;
-}
-.inner-container {
-  margin: 0;
+.loader {
   height: 100%;
-  padding-left: 0;
-  padding-right: 0;
 }
-.header {
-  opacity: 0.5;
-  background-color: lightgrey;
+.v-skeleton-loader__image {
+  height: 70%;
+}
+.v-card__subtitle {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 .container--fluid {
-  padding: 0;
-}
-.slider {
-  width: 50%;
+  padding: 50px;
+  height: 100%;
 }
 </style>
