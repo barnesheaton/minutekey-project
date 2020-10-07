@@ -39,7 +39,7 @@
 
 <script>
 import BikeSlide from './components/BikeSlide'
-import { getMotorcycles } from './mockServer.js'
+import { getMotorcycles } from './mockResolvers.js'
 
 export default {
   components: {
