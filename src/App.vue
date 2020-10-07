@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import yahooFinance from 'yahoo-finance'
 
 export default {
   name: 'App',
@@ -40,20 +39,7 @@ export default {
       stocks: null
     }
   },
-  methods: {
-    getStocks() {
-      yahooFinance.historical(
-        {
-          symbol: 'AAPL',
-          from: '2012-01-01',
-          to: '2012-12-31'
-        },
-        function (err, quotes) {
-          console.log(quotes)
-        }
-      )
-    }
-  }
+  methods: {}
 }
 </script>
 
